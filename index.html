@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div>
+    <div class="container">
+      <div class="row" id="pokemones">
+      </div>
+    </div>
+</div>
+<script>
+   var request = new Request('https://pokeapi.co/api/v2/pokemon/', {
+        method: 'GET',
+        mode: 'cors'
+    });
+    fetch(request)
+    .then(function(response) {
+        return response.text();
+    })
+    .then(function(data) {
+        var json = JSON.parse(data);
+        var pokemones = json.results;
+        var pokemonDiv = document.getElementById("pokemones"); 
+        var paintPokemon = '';
+        pokemones.forEach(function(value, index){
+            var id = index + 1;
+            paintPokemon += '<div class="col-sm-4">';
+            paintPokemon += '<h3>'+value.name+'</h3>';
+            paintPokemon += '<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+id+'.png" />';
+            paintPokemon += '<button onClick="pokemonDescrip('+id+')">mas informacion</button>';
+            paintPokemon += '</div>';
+            pokemonDiv.innerHTML = paintPokemon;
+            
+        });
+    })
+    .catch(function(err) {
+        console.error(err);
+    });
+    
+    function pokemonDescrip(id){
+        var request = new Request('https://pokeapi.co/api/v2/pokemon/'+id, {
+            method: 'GET',
+            mode: 'cors'
+        });
+        fetch(request)
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(data) {
+            var json = JSON.parse(data);
+            console.log(json);
+            var habilidades = json.abilities;
+            var textHab = 'HABILIDADES \n\n';
+            habilidades.forEach(function(value, index){
+                textHab += value.ability.name + "\n";
+            });
+            alert(textHab);
+        })
+        .catch(function(err) {
+            console.error(err);
+        });
+    }
+</script>
+</body>
+</html>
